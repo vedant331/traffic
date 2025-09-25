@@ -1,0 +1,680 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SmartWalk — Rewarding Safe Crossings</title>
+
+  <!-- Tailwind Play CDN (good for quick demos). For production use proper Tailwind build. -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <meta name="description" content="SmartWalk turns safe crossings into points. Start journeys, follow signals, earn rewards." />
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --card:#fff;
+      --muted:#676f77;
+      --accent:#1e90ff;
+      --danger:#e74c3c;
+      --radius:14px;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#fff, var(--bg));color:#111;}
+    .container{max-width:1100px;margin:0 auto;padding:24px;}
+    .header-inner{display:flex;align-items:center;justify-content:space-between;padding:8px 0;}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand-text{font-weight:700;font-size:20px}
+    .nav a{margin-left:18px;color:#111;text-decoration:none;font-weight:600}
+    .site-header{background:transparent;position:sticky;top:0;z-index:20;padding:8px 0}
+
+    .hero{padding:40px 0}
+    .hero-inner{display:flex;gap:28px;align-items:center}
+    .hero-left{flex:1}
+    .hero-right{flex:0 0 360px;display:flex;justify-content:center}
+    h1{font-size:44px;margin:0 0 8px}
+    .lead{font-size:18px;color:var(--muted);margin:8px 0 16px}
+    .cta-row{display:flex;gap:12px}
+    .btn{padding:10px 16px;border-radius:10px;border:0;cursor:pointer;font-weight:700}
+    .btn.primary{background:var(--accent);color:#fff}
+    .btn.ghost{background:transparent;border:1px solid #ddd;color:#111}
+    .btn.danger{background:var(--danger);color:#fff}
+
+    .phone-mockup{width:270px;height:540px;border-radius:36px;border:12px solid #111;display:flex;align-items:center;justify-content:center;background:#000}
+    .app-screen{width:224px;height:480px;border-radius:22px;background:#fff;overflow:hidden;display:flex;align-items:center;justify-content:center}
+    .splash{display:flex;flex-direction:column;align-items:center;gap:6px}
+    .splash h2{margin:0;font-size:20px}
+    .splash-dots{color:#888;margin-top:8px}
+
+    .section{padding:30px 0}
+    .grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:16px}
+    .card{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(16,24,40,0.06)}
+
+    .note{color:var(--muted);font-size:13px;margin-top:12px}
+
+    .demo-controls{background:var(--card);padding:16px;border-radius:12px;box-shadow:0 8px 24px rgba(16,24,40,0.06);display:flex;flex-direction:column;gap:12px}
+    .demo-controls .row{display:flex;gap:10px;align-items:center}
+    .demo-controls label{min-width:140px;color:var(--muted)}
+    .demo-results{display:flex;gap:12px;margin-top:14px}
+    .panel{flex:1;background:var(--card);padding:12px;border-radius:10px;min-height:120px}
+    .log{font-family:monospace;background:#f4f6f8;padding:8px;border-radius:8px;min-height:80px;color:#111}
+
+    .rewards-list .card{min-height:120px}
+    .contact-form{display:flex;flex-direction:column;gap:8px;max-width:540px}
+    .contact-form input, .contact-form textarea{padding:10px;border-radius:8px;border:1px solid #e6e9ee}
+
+    .site-footer{padding:18px 0;color:var(--muted);border-top:1px solid #eee;margin-top:40px;display:flex;align-items:center;justify-content:center}
+
+    @media (max-width:900px){
+      .hero-inner{flex-direction:column-reverse}
+      .phone-mockup{width:200px;height:400px}
+      .app-screen{width:160px;height:320px}
+    }
+  </style>
+</head>
+<body class="antialiased bg-gradient-to-b from-white to-slate-50 text-slate-900">
+
+  <header class="sticky top-0 bg-white/60 backdrop-blur-sm border-b border-slate-100 z-20">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 flex items-center justify-center rounded-md border">
+          <!-- simple traffic-light icon -->
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="7" y="1" width="10" height="22" rx="2" stroke="#111" stroke-width="1.2" fill="#fff"/>
+            <circle cx="12" cy="6" r="2.2" fill="#ef4444"/>
+            <circle cx="12" cy="12" r="2.2" fill="#f59e0b"/>
+            <circle cx="12" cy="18" r="2.2" fill="#10b981"/>
+          </svg>
+        </div>
+        <div class="font-semibold text-lg">SmartWalk</div>
+      </div>
+
+      <nav class="hidden sm:flex items-center gap-6 text-sm font-medium">
+        <a href="#how" class="hover:text-sky-600">How it works</a>
+        <a href="#demo" class="hover:text-sky-600">Demo</a>
+        <a href="#rewards" class="hover:text-sky-600">Rewards</a>
+        <a href="#contact" class="hover:text-sky-600">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section id="home" class="max-w-6xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <div>
+        <h1 class="text-4xl sm:text-5xl font-extrabold mb-4">SmartWalk</h1>
+        <p class="text-slate-600 mb-6 max-w-xl">Follow traffic rules. Earn points. Make your city safer — one crossing at a time.</p>
+
+        <div class="flex gap-3">
+          <button id="cta-demo" class="px-5 py-3 rounded-lg bg-sky-600 text-white font-semibold shadow hover:bg-sky-700">Try Demo Journey</button>
+          <a href="#how" class="px-4 py-3 rounded-lg border border-slate-200 text-slate-800 hover:bg-slate-50">How it works</a>
+        </div>
+
+        <p class="mt-4 text-sm text-slate-500">Points can be redeemed for partner discounts, badges, or donated to community projects.</p>
+      </div>
+
+      <div class="flex justify-center">
+        <!-- phone mockup -->
+        <div class="w-[270px] h-[540px] rounded-[36px] border-8 border-slate-900 flex items-center justify-center shadow-lg">
+          <div id="app-screen" class="w-[224px] h-[480px] rounded-[22px] bg-white overflow-hidden flex items-center justify-center">
+            <!-- initial splash content (JS will update this) -->
+            <div class="text-center space-y-2">
+              <svg class="mx-auto" width="64" height="64" viewBox="0 0 24 24" fill="none"><rect x="6" y="1" width="12" height="22" rx="2" stroke="#111" stroke-width="1.2" fill="#fff"/><circle cx="12" cy="6" r="2.2" fill="#ef4444"/><circle cx="12" cy="12" r="2.2" fill="#f59e0b"/><circle cx="12" cy="18" r="2.2" fill="#10b981"/></svg>
+              <h2 class="text-lg font-bold">SmartWalk</h2>
+              <div class="text-slate-400">• • •</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW -->
+    <section id="how" class="max-w-6xl mx-auto px-4 py-10">
+      <h2 class="text-2xl font-semibold mb-4">How SmartWalk Works</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white p-5 rounded-xl shadow">
+          <h3 class="font-semibold mb-2">Start or Plan Journey</h3>
+          <p class="text-slate-600 text-sm">Open the app, tap Start Journey (real-time) or Plan Journey (enter from/to). The app tracks your movement while active.</p>
+        </div>
+        <div class="bg-white p-5 rounded-xl shadow">
+          <h3 class="font-semibold mb-2">Detect Crossings</h3>
+          <p class="text-slate-600 text-sm">We use intersection geofences + GPS and sensor heuristics to detect valid crossings. If you follow signals, you earn points.</p>
+        </div>
+        <div class="bg-white p-5 rounded-xl shadow">
+          <h3 class="font-semibold mb-2">Earn & Redeem</h3>
+          <p class="text-slate-600 text-sm">Points are stored in your wallet. Redeem for partner offers, unlock badges, or donate to local safety projects.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEMO -->
+    <section id="demo" class="max-w-6xl mx-auto px-4 py-10">
+      <h2 class="text-2xl font-semibold mb-3">Interactive Demo</h2>
+      <p class="text-slate-600 mb-4">Demo simulates a journey and awards points when safe crossings are detected. Use device GPS or the simulated route.</p>
+
+      <div class="bg-white p-4 rounded-xl shadow grid md:grid-cols-2 gap-6">
+        <div class="space-y-3">
+          <div class="flex items-center gap-3">
+            <label class="w-36 text-sm text-slate-600">Mode:</label>
+            <select id="demo-mode" class="px-3 py-2 border rounded-lg">
+              <option value="sim">Simulated route</option>
+              <option value="gps">Use device GPS (if supported)</option>
+            </select>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <label class="w-36 text-sm text-slate-600">Free journeys/day:</label>
+            <input id="limit-input" type="number" min="1" value="5" class="px-3 py-2 border rounded-lg w-24" />
+          </div>
+
+          <div class="flex gap-3 mt-2">
+            <button id="start-btn" class="px-4 py-2 rounded-lg bg-sky-600 text-white font-semibold">Start Journey</button>
+            <button id="stop-btn" class="px-4 py-2 rounded-lg bg-rose-500 text-white font-semibold disabled:opacity-50" disabled>Stop Journey</button>
+            <button id="simulate-cross" class="px-3 py-2 rounded-lg border">Force Crossing</button>
+          </div>
+
+          <div class="mt-4">
+            <h4 class="font-medium mb-2">Live</h4>
+            <pre id="live-log" class="bg-slate-50 p-3 rounded-lg text-sm h-40 overflow-auto">No journey running.</pre>
+          </div>
+        </div>
+
+        <div>
+          <div class="bg-slate-50 p-4 rounded-lg">
+            <h4 class="font-medium mb-2">Wallet</h4>
+            <div class="text-3xl font-bold mb-3">Points: <span id="wallet-points">0</span></div>
+
+            <h4 class="font-medium mb-2">Leaderboard</h4>
+            <ol id="leaderboard" class="list-decimal pl-6 text-sm text-slate-700">
+              <li></li>
+              <li>No leaderboard data yet.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REWARDS -->
+    <section id="rewards" class="max-w-6xl mx-auto px-4 py-10">
+      <h2 class="text-2xl font-semibold mb-4">Rewards Catalog</h2>
+      <div id="rewards-list" class="grid md:grid-cols-3 gap-6"></div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="max-w-6xl mx-auto px-4 py-10">
+      <h2 class="text-2xl font-semibold mb-3">Contact</h2>
+      <p class="text-slate-600 mb-4">Feel free to share your journey thorugh feedback</p>
+      <form id="contact-form" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <input id="contact-name" class="p-3 border rounded-lg" placeholder="Your name" required />
+        <input id="contact-email" class="p-3 border rounded-lg" placeholder="Email" type="email" required />
+        <textarea id="contact-msg" class="p-3 border rounded-lg md:col-span-2" placeholder="Message" rows="4"></textarea>
+        <button class="md:col-span-2 px-4 py-3 bg-sky-600 text-white rounded-lg font-semibold" type="submit">Send Message</button>
+      </form>
+    </section>
+
+    <footer class="border-t border-slate-100 mt-10">
+      <div class="max-w-6xl mx-auto px-4 py-6 flex items-center justify-between text-sm text-slate-500">
+        <div>© <span id="year"></span> SmartWalk. Built for safer streets.</div>
+        <div>Privacy · Terms</div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+  // app.js
+  // Full demo logic for SmartWalk website.
+  // - Confirms mode before start
+  // - Decrements free journeys immediately on start
+  // - Awards safe crossing points live: pedestrian +10, driver +6
+  // - Detects violations (fast speed during crossing) and deducts points + flagging
+  // - Live wallet & leaderboard updates, persisted in localStorage
+  // - Simulated route AND device GPS supported
+  // - Leaderboard seeded with demo engineer names
+
+  const walletPointsEl = document.getElementById('wallet-points');
+  const liveLogEl = document.getElementById('live-log');
+  const leaderboardEl = document.getElementById('leaderboard');
+  const rewardsListEl = document.getElementById('rewards-list');
+  const startBtn = document.getElementById('start-btn');
+  const stopBtn = document.getElementById('stop-btn');
+  const simulateCrossBtn = document.getElementById('simulate-cross');
+  const demoModeSelect = document.getElementById('demo-mode');
+  const limitInput = document.getElementById('limit-input');
+  const phoneMockup = document.getElementById('app-screen');
+  const yearEl = document.getElementById('year');
+
+  let journeyActive = false;
+  let currentJourneyId = null;
+  let gpsWatchId = null;
+  let gpsBuffer = [];
+  let wallet = { points: 0 };
+  let leaderboard = [];
+  let freeJourneysLimit = parseInt(limitInput.value || '5', 10);
+  let journeysToday = parseInt(localStorage.getItem('sw_journeysToday') || '0', 10);
+  let simInterval = null;
+  let effectiveMode = null; // 'pedestrian' | 'driver'
+
+  // sample rewards
+  const REWARDS = [
+    { id: 'r1', title: 'Health Checkup Discount 10%', cost: 600 , desc: '10% off on basic health check package with partner clinic.' },
+    { id: 'r2', title: 'Water Bottle / Reusable Bag', cost: 120, desc: 'Eco gift (reusable water bottle or tote).' },
+    { id: 'r3', title: 'Plant a Tree', cost: 500, desc: 'Donate points to plant trees' }
+  ];
+
+  function init() {
+    yearEl && (yearEl.textContent = new Date().getFullYear());
+
+    // load wallet
+    wallet = JSON.parse(localStorage.getItem('sw_wallet') || JSON.stringify({ points: 0 }));
+
+    // --- Leaderboard seeding: keep stored if exists, otherwise create demo engineer-style list ---
+    const storedLeaderboard = localStorage.getItem('sw_leaderboard');
+    if (storedLeaderboard) {
+      try {
+        leaderboard = JSON.parse(storedLeaderboard);
+      } catch (e) {
+        leaderboard = [];
+      }
+    } else {
+      // demo engineer names and points
+      leaderboard = [
+        { name: 'Rahul (Eng)', points: 320 },
+        { name: 'Sneha (Eng)', points: 285 },
+        { name: 'Aarav (Eng)', points: 240 },
+        { name: 'Priya (Eng)', points: 190 },
+        { name: 'You (demo)', points: wallet.points }
+      ];
+      localStorage.setItem('sw_leaderboard', JSON.stringify(leaderboard));
+    }
+    // ---------------------------------------------------------------------
+
+    freeJourneysLimit = parseInt(limitInput.value || '5', 10);
+    attachHandlers();
+    populateRewards();
+    updateUI();
+    logLive('Demo ready. Choose mode and Start Journey. Free journeys/day default = ' + freeJourneysLimit);
+  }
+
+  function attachHandlers() {
+    startBtn.addEventListener('click', startJourney);
+    stopBtn.addEventListener('click', stopJourney);
+    simulateCrossBtn.addEventListener('click', () => forceCrossing());
+    demoModeSelect.addEventListener('change', () => {
+      logLive('Mode selector: ' + demoModeSelect.value);
+    });
+    limitInput.addEventListener('change', () => {
+      freeJourneysLimit = parseInt(limitInput.value || '5', 10);
+      logLive('Free journeys/day changed to ' + freeJourneysLimit);
+    });
+    document.getElementById('cta-demo').addEventListener('click', () => {
+      demoModeSelect.value = 'sim';
+      window.location.hash = '#demo';
+      logLive('Demo shortcut: Simulated route selected.');
+    });
+    document.getElementById('contact-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Thanks! We got your message — (demo).');
+      e.target.reset();
+    });
+  }
+
+  function updateUI() {
+    walletPointsEl.textContent = wallet.points;
+    renderLeaderboard();
+    renderMockScreen(journeyActive);
+
+    startBtn.disabled = journeyActive;
+    stopBtn.disabled = !journeyActive;
+    simulateCrossBtn.disabled = !journeyActive;
+
+    // update rewards buttons availability
+    document.querySelectorAll('#rewards-list button[data-id]').forEach(b => {
+      const cost = Number(b.dataset.cost);
+      b.disabled = wallet.points < cost;
+    });
+  }
+
+  function logLive(msg) {
+    const time = new Date().toLocaleTimeString();
+    liveLogEl.textContent = `${time} — ${msg}\n` + liveLogEl.textContent;
+  }
+
+  // Leaderboard rendering
+  function renderLeaderboard() {
+    leaderboardEl.innerHTML = '';
+    if (!leaderboard.length) {
+      leaderboardEl.innerHTML = '<li>No leaderboard data yet.</li>';
+      return;
+    }
+    // natural ranking by points
+    leaderboard.sort((a,b) => b.points - a.points);
+    leaderboard.forEach(row => {
+      const li = document.createElement('li');
+      li.textContent = `${row.name} — ${row.points} pts`;
+      leaderboardEl.appendChild(li);
+    });
+  }
+
+  // Persist helpers
+  function saveWallet() { localStorage.setItem('sw_wallet', JSON.stringify(wallet)); }
+  function saveLeaderboard() { localStorage.setItem('sw_leaderboard', JSON.stringify(leaderboard)); }
+  function saveJourneysToday() { localStorage.setItem('sw_journeysToday', String(journeysToday)); }
+
+  // Haversine distance
+  function haversine(a,b) {
+    const toRad = v => v * Math.PI / 180;
+    const R = 6371000;
+    const dLat = toRad(b.lat - a.lat);
+    const dLon = toRad(b.lng - a.lng);
+    const la = toRad(a.lat), lb = toRad(b.lat);
+    const sinDlat = Math.sin(dLat/2), sinDlon = Math.sin(dLon/2);
+    const h = sinDlat*sinDlat + Math.cos(la)*Math.cos(lb)*sinDlon*sinDlon;
+    return 2*R*Math.asin(Math.sqrt(h));
+  }
+
+  // process gpsBuffer for demo crossing detection (safe crossings + violations)
+  function processBufferAndDetectCrossings() {
+    if (!gpsBuffer.length) return { points: 0, violations: 0 };
+    const samples = gpsBuffer.slice();
+    if (samples.length < 3) return { points: 0, violations: 0 };
+    let points = 0;
+    let violations = 0;
+
+    for (let i = 1; i < samples.length - 1; i++) {
+      const prev = samples[i-1], cur = samples[i], next = samples[i+1];
+      const d1 = haversine(prev,cur), d2 = haversine(cur,next);
+      const total = d1 + d2;
+
+      if (total > 0.5 && total < 60) {
+        let modeGuess;
+        if (demoModeSelect.value === 'gps') {
+          modeGuess = (cur.speed && cur.speed > 3.5) ? 'driver' : 'pedestrian';
+        } else {
+          modeGuess = effectiveMode || demoModeSelect.value || 'pedestrian';
+          if (modeGuess === 'sim') modeGuess = 'pedestrian';
+        }
+
+        const speed = cur.speed || 0;
+        const suddenSpike = (prev.speed != null && Math.abs(speed - prev.speed) > 6) || (next.speed != null && Math.abs(speed - next.speed) > 6);
+        if (speed > 6 || suddenSpike) {
+          const penalty = 5;
+          violations += 1;
+          logLive(`Violation detected (speed ${speed.toFixed(2)} m/s). -${penalty} pts flagged.`);
+          wallet.points = Math.max(0, wallet.points - penalty);
+          saveWallet();
+        } else {
+          const pts = (modeGuess === 'driver') ? 6 : 10;
+          points += pts;
+          logLive(`Safe crossing detected → +${pts} pts (mode: ${modeGuess}).`);
+        }
+      }
+    }
+
+    gpsBuffer = [];
+    return { points, violations };
+  }
+
+// Confirm mode and start journey
+function startJourney() {
+  freeJourneysLimit = parseInt(limitInput.value || '5', 10);
+
+  // enforce daily free-journey limit
+  if (journeysToday >= freeJourneysLimit) {
+    const wantsPremium = confirm(
+      "You reached today's free limit. Subscribe to Premium for unlimited journeys + perks. Simulate Premium for demo?"
+    );
+    if (!wantsPremium) {
+      logLive('Start blocked — free limit reached');
+      return;
+    } else {
+      // temporary demo premium
+      freeJourneysLimit = 9999;
+      limitInput.value = freeJourneysLimit;
+      logLive('Demo Premium active (temporary).');
+    }
+  }
+
+  // Ask/confirm scoring mode before starting
+  const selected = demoModeSelect.value;
+  if (selected === 'sim' || selected === 'gps') {
+    const answer = prompt(
+      'Start journey in which scoring mode? Type "pedestrian" or "driver" (leave blank for pedestrian).',
+      'pedestrian'
+    );
+    if (answer === null) {
+      logLive('Start canceled by user (mode confirmation).');
+      return;
+    }
+    const normalized = (answer || '').trim().toLowerCase();
+    effectiveMode = normalized === 'driver' ? 'driver' : 'pedestrian';
+  } else {
+    effectiveMode = selected === 'driver' ? 'driver' : 'pedestrian';
+  }
+
+  if (journeyActive) return; // already running
+
+  // start journey
+  journeyActive = true;
+  currentJourneyId = 'j-' + Date.now();
+  gpsBuffer = [];
+  journeysToday += 1;
+  saveJourneysToday();
+  logLive(
+    'Journey started (id: ' +
+      currentJourneyId +
+      '). Mode (confirmed): ' +
+      effectiveMode +
+      '. Journeys used today: ' +
+      journeysToday +
+      '/' +
+      freeJourneysLimit
+  );
+
+  updateUI();
+
+  // If GPS mode requested and available, watch position; otherwise fall back to simulation
+  if (demoModeSelect.value === 'gps' && 'geolocation' in navigator) {
+    logLive('Requesting device location (allow permission)...');
+    gpsWatchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        const s = {
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          speed: pos.coords.speed || 0,
+          timestamp: Date.now()
+        };
+        gpsBuffer.push(s);
+        logLive(
+          `GPS sample ${s.lat.toFixed(5)}, ${s.lng.toFixed(5)} spd:${(s.speed || 0).toFixed(2)}`
+        );
+        if (gpsBuffer.length >= 6) {
+          const { points, violations } = processBufferAndDetectCrossings();
+          if (points) {
+            wallet.points += points;
+            saveWallet();
+          }
+          if (violations > 0) {
+            logLive(`Detected ${violations} violation(s) this batch.`);
+          }
+          updateUI();
+        }
+      },
+      (err) => {
+        logLive('GPS error: ' + err.message);
+        alert('GPS error or permission denied. Use Simulated route for demo.');
+        simulateRoute();
+      },
+      {
+        enableHighAccuracy: true,
+        maximumAge: 2000,
+        timeout: 10000
+      }
+    );
+  } else {
+    // non-GPS mode: simulate route
+    simulateRoute();
+  }
+
+  updateUI();
+}
+
+
+  // Stop journey: finalize any remaining detection then update leaderboard
+  function stopJourney() {
+    if (!journeyActive) return;
+    journeyActive = false;
+    if (gpsWatchId) {
+      navigator.geolocation.clearWatch(gpsWatchId);
+      gpsWatchId = null;
+    }
+    if (simInterval) {
+      clearInterval(simInterval);
+      simInterval = null;
+    }
+    const { points, violations } = processBufferAndDetectCrossings();
+    if (points) {
+      wallet.points += points;
+      saveWallet();
+    }
+    if (violations) logLive(`End-of-journey violations: ${violations}`);
+
+    // update or add 'You (demo)' entry — if a seeded entry like 'You (demo)' exists, update it
+    const youIdx = leaderboard.findIndex(x => x.name.toLowerCase().includes('you (demo)') || x.name.toLowerCase() === 'you (demo)');
+    if (youIdx >= 0) {
+      leaderboard[youIdx].points = wallet.points;
+    } else {
+      // fallback: update first matching 'You'
+      const youEntry = leaderboard.find(x => x.name.toLowerCase().includes('you'));
+      if (youEntry) youEntry.points = wallet.points;
+      else leaderboard.push({ name: 'You (demo)', points: wallet.points });
+    }
+    saveLeaderboard();
+
+    logLive('Journey ended. Wallet now: ' + wallet.points + ' pts');
+    updateUI();
+  }
+
+  // Simulated route generator
+  function simulateRoute() {
+    let idx = 0;
+    const center = { lat: 19.075983, lng: 72.877655 };
+    simInterval = setInterval(() => {
+      if (!journeyActive) { clearInterval(simInterval); simInterval = null; return; }
+      const dx = (Math.sin(idx/3) * 0.00008) + (Math.random() * 0.00002 - 0.00001);
+      const dy = (Math.cos(idx/2) * 0.00008) + (Math.random() * 0.00002 - 0.00001);
+      const baseSpeed = (effectiveMode === 'driver') ? (4 + Math.abs(Math.sin(idx/4))) : (1 + Math.abs(Math.sin(idx/6)));
+      const speed = baseSpeed + Math.random() * 0.6;
+      const sample = { lat: center.lat + dx, lng: center.lng + dy, speed, timestamp: Date.now() + idx*1000 };
+      gpsBuffer.push(sample);
+      logLive(`Sim sample #${idx+1}: ${sample.lat.toFixed(6)},${sample.lng.toFixed(6)} spd:${sample.speed.toFixed(2)}`);
+      idx++;
+      if (gpsBuffer.length >= 6) {
+        const { points, violations } = processBufferAndDetectCrossings();
+        if (points) {
+          wallet.points += points;
+          saveWallet();
+        }
+        if (violations) {
+          logLive(`Detected ${violations} violation(s) in simulation.`);
+        }
+        updateUI();
+      }
+      if (idx > 180) { stopJourney(); }
+    }, 900);
+  }
+
+  // Manual crossing via UI
+  function forceCrossing() {
+    if (!journeyActive) { alert('Start a journey first'); return; }
+    const mode = effectiveMode || (demoModeSelect.value === 'gps' ? 'pedestrian' : demoModeSelect.value);
+    const pts = (mode === 'driver') ? 6 : 10;
+    logLive('Manual force crossing → +' + pts + ' pts (' + mode + ')');
+    wallet.points += pts;
+    saveWallet();
+    updateUI();
+  }
+
+  // Rewards rendering & redeem
+  function populateRewards() {
+    const container = rewardsListEl;
+    container.innerHTML = '';
+    REWARDS.forEach(r => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `<h4 class="font-semibold">${r.title}</h4><p class="text-sm text-gray-600">${r.desc}</p>
+        <div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between">
+          <div class="font-bold">${r.cost} pts</div>
+          <div><button class="px-3 py-1 bg-sky-600 text-white rounded" data-id="${r.id}" data-cost="${r.cost}">${r.id==='r3' ? 'Donate' : 'Redeem'}</button></div>
+        </div>`;
+      container.appendChild(card);
+    });
+    container.querySelectorAll('button[data-id]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = e.currentTarget.dataset.id;
+        handleRedeem(id);
+      });
+    });
+  }
+
+  function handleRedeem(id) {
+    const r = REWARDS.find(x => x.id === id);
+    if (!r) return;
+    if (wallet.points < r.cost) { alert('Not enough points'); return; }
+    if (r.id === 'r3') {
+      if (!confirm('Donate ' + r.cost + ' pts to Plant a Tree? This will deduct points and record a donation. Proceed?')) return;
+      wallet.points -= r.cost;
+      saveWallet();
+      logLive('Donation recorded: Plant a Tree (-' + r.cost + ' pts). Thank you!');
+    } else {
+      wallet.points -= r.cost;
+      saveWallet();
+      logLive('Redeemed: ' + r.title + ' (-' + r.cost + ' pts).');
+    }
+    const youIdx = leaderboard.findIndex(x => x.name.toLowerCase().includes('you'));
+    if (youIdx >= 0) leaderboard[youIdx].points = wallet.points;
+    else leaderboard.push({ name: 'You (demo)', points: wallet.points });
+    saveLeaderboard();
+    updateUI();
+    alert('Action processed (demo). Check Live log for details.');
+  }
+
+  // Mock phone screen content
+  function renderMockScreen(active) {
+    if (!phoneMockup) return;
+    phoneMockup.innerHTML = '';
+    const container = document.createElement('div');
+    container.style.display = 'flex';
+    container.style.flexDirection = 'column';
+    container.style.alignItems = 'center';
+    container.style.justifyContent = 'center';
+    container.style.width = '100%';
+    container.style.height = '100%';
+    container.style.fontFamily = 'Inter, Arial, sans-serif';
+    if (!active) {
+      container.innerHTML = `
+        <div style="text-align:center">
+          <svg width="64" height="64" viewBox="0 0 24 24"><rect x="6" y="1" width="12" height="22" rx="2" stroke="#111" stroke-width="1.2" fill="#fff"/><circle cx="12" cy="6" r="2.2" fill="#e74c3c"/><circle cx="12" cy="12" r="2.2" fill="#f1c40f"/><circle cx="12" cy="18" r="2.2" fill="#27ae60"/></svg>
+          <h3 style="margin:10px 0 2px">SmartWalk</h3>
+          <div style="color:#666;font-size:13px">Points & Wallet will appear here later</div>
+        </div>
+      `;
+    } else {
+      container.innerHTML = `
+        <div style="width:100%;padding:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:700">Mode</div>
+            <div style="font-size:12px;color:#666">LIVE</div>
+          </div>
+          <div style="margin-top:18px;font-size:26px;font-weight:800;text-align:center">${wallet.points} pts</div>
+          <div style="margin-top:10px;text-align:center;color:#666;font-size:12px">Journey active</div>
+        </div>
+      `;
+    }
+    phoneMockup.appendChild(container);
+  }
+
+  // init app
+  init();
+  </script>
+</body>
+</html>
