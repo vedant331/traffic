@@ -8,7 +8,7 @@
   <!-- Tailwind Play CDN (good for quick demos). For production use proper Tailwind build. -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <meta name="description" content="SmartWalk turns safe crossings into points. Start journeys, follow signals, earn rewards." />
+  <meta name="description" content="SmartCross turns safe crossings into points. Start journeys, follow signals, earn rewards." />
   <style>
     :root{
       --bg:#f8fafc;
@@ -86,7 +86,7 @@
             <circle cx="12" cy="18" r="2.2" fill="#10b981"/>
           </svg>
         </div>
-        <div class="font-semibold text-lg">SmartWalk</div>
+        <div class="font-semibold text-lg">SmartCross</div>
       </div>
 
       <nav class="hidden sm:flex items-center gap-6 text-sm font-medium">
@@ -102,7 +102,7 @@
     <!-- HERO -->
     <section id="home" class="max-w-6xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
       <div>
-        <h1 class="text-4xl sm:text-5xl font-extrabold mb-4">SmartWalk</h1>
+        <h1 class="text-4xl sm:text-5xl font-extrabold mb-4">SmartCross</h1>
         <p class="text-slate-600 mb-6 max-w-xl">Follow traffic rules. Earn points. Make your city safer — one crossing at a time.</p>
 
         <div class="flex gap-3">
@@ -120,7 +120,7 @@
             <!-- initial splash content (JS will update this) -->
             <div class="text-center space-y-2">
               <svg class="mx-auto" width="64" height="64" viewBox="0 0 24 24" fill="none"><rect x="6" y="1" width="12" height="22" rx="2" stroke="#111" stroke-width="1.2" fill="#fff"/><circle cx="12" cy="6" r="2.2" fill="#ef4444"/><circle cx="12" cy="12" r="2.2" fill="#f59e0b"/><circle cx="12" cy="18" r="2.2" fill="#10b981"/></svg>
-              <h2 class="text-lg font-bold">SmartWalk</h2>
+              <h2 class="text-lg font-bold">SmartCross</h2>
               <div class="text-slate-400">• • •</div>
             </div>
           </div>
@@ -130,7 +130,7 @@
 
     <!-- HOW -->
     <section id="how" class="max-w-6xl mx-auto px-4 py-10">
-      <h2 class="text-2xl font-semibold mb-4">How SmartWalk Works</h2>
+      <h2 class="text-2xl font-semibold mb-4">How SmartCross Works</h2>
       <div class="grid md:grid-cols-3 gap-6">
         <div class="bg-white p-5 rounded-xl shadow">
           <h3 class="font-semibold mb-2">Start or Plan Journey</h3>
@@ -214,7 +214,7 @@
 
     <footer class="border-t border-slate-100 mt-10">
       <div class="max-w-6xl mx-auto px-4 py-6 flex items-center justify-between text-sm text-slate-500">
-        <div>© <span id="year"></span> SmartWalk. Built for safer streets.</div>
+        <div>© <span id="year"></span> SmartCross. Built for safer streets.</div>
         <div>Privacy · Terms</div>
       </div>
     </footer>
@@ -222,7 +222,7 @@
 
   <script>
   // app.js
-  // Full demo logic for SmartWalk website.
+  // Full demo logic for SmartCross website.
   // - Confirms mode before start
   // - Decrements free journeys immediately on start
   // - Awards safe crossing points live: pedestrian +10, driver +6
@@ -654,7 +654,7 @@ function startJourney() {
       container.innerHTML = `
         <div style="text-align:center">
           <svg width="64" height="64" viewBox="0 0 24 24"><rect x="6" y="1" width="12" height="22" rx="2" stroke="#111" stroke-width="1.2" fill="#fff"/><circle cx="12" cy="6" r="2.2" fill="#e74c3c"/><circle cx="12" cy="12" r="2.2" fill="#f1c40f"/><circle cx="12" cy="18" r="2.2" fill="#27ae60"/></svg>
-          <h3 style="margin:10px 0 2px">SmartWalk</h3>
+          <h3 style="margin:10px 0 2px">SmartCross</h3>
           <div style="color:#666;font-size:13px">Points & Wallet will appear here later</div>
         </div>
       `;
@@ -678,4 +678,3 @@ function startJourney() {
   </script>
 </body>
 </html>
-
